@@ -22,7 +22,7 @@ const TrainerPage = page(() => import('./pages/TrainerPage'), 'TrainerPage');
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ErrorBoundary>
         <Routes>
           <Route element={<Layout />}>

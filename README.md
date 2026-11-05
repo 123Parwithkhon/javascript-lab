@@ -28,6 +28,7 @@ npm run dev
 | `npm run preview` | показывает собранную версию |
 | `npm run test:edge` | запускает тесты в установленном Microsoft Edge, ничего не скачивая |
 | `npm test` | запускает тесты в Chromium, Firefox и WebKit |
+| `npm run test:pages` | проверяет сборку для GitHub Pages в подпапке `/javascript-lab/` |
 
 Перед первым запуском `npm test` один раз скачайте браузеры:
 

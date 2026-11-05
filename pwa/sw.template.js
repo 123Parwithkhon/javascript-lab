@@ -1,5 +1,6 @@
 // Этот файл собирается в sw.js: список файлов и версия подставляются при сборке.
 const CACHE = 'jslab-__VERSION__';
+const BASE = '__BASE__';
 const FILES = __FILES__;
 
 self.addEventListener('install', (event) => {
@@ -26,7 +27,7 @@ self.addEventListener('fetch', (event) => {
 
   // Страницы берём из сети, чтобы видеть обновления, а без сети — из кэша.
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('/index.html', { ignoreVary: true })));
+    event.respondWith(fetch(request).catch(() => caches.match(`${BASE}index.html`, { ignoreVary: true })));
     return;
   }
 

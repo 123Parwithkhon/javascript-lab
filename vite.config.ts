@@ -5,20 +5,35 @@ import react from '@vitejs/plugin-react';
 
 /** Создаёт sw.js со списком файлов сборки, чтобы сайт работал без интернета. */
 function offlineSupport(): Plugin {
+  let base = '/';
+
   return {
     name: 'jslab-offline',
     apply: 'build',
     enforce: 'post',
+    configResolved(config) {
+      base = config.base;
+    },
     generateBundle(_options, bundle) {
-      const built = Object.keys(bundle).map((name) => `/${name}`);
-      const files = [...built, '/manifest.webmanifest', '/icon.svg'];
+      const built = Object.keys(bundle).map((name) => `${base}${name}`);
+      const files = [...built, `${base}manifest.webmanifest`, `${base}icon.svg`];
       const version = createHash('sha256').update(built.join()).digest('hex').slice(0, 12);
       const template = readFileSync(new URL('./pwa/sw.template.js', import.meta.url), 'utf8');
       this.emitFile({
         type: 'asset',
         fileName: 'sw.js',
-        source: template.replace('__VERSION__', version).replace('__FILES__', JSON.stringify(files)),
+        source: template
+          .replace('__VERSION__', version)
+          .replace('__BASE__', base)
+          .replace('__FILES__', JSON.stringify(files)),
       });
+
+      // GitHub Pages отвечает этим файлом на неизвестные адреса. Благодаря копии
+      // главной страницы прямые ссылки на уроки открываются, а не дают ошибку.
+      const index = bundle['index.html'];
+      if (index?.type === 'asset') {
+        this.emitFile({ type: 'asset', fileName: '404.html', source: index.source });
+      }
     },
   };
 }
