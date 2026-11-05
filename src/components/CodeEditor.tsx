@@ -57,6 +57,10 @@ export function CodeEditor({ value, onChange, label }: CodeEditorProps) {
     };
   }, [label]);
 
+  useEffect(() => {
+    if (ready) viewRef.current?.requestMeasure();
+  }, [ready]);
+
   // Внешняя смена кода: сброс или выбор примера.
   useEffect(() => {
     const view = viewRef.current;

@@ -1,0 +1,13 @@
+{
+  "name": "JavaScript Lab",
+  "short_name": "JS Lab",
+  "description": "Учите JavaScript прямо в браузере: без установки программ и без регистрации.",
+  "lang": "ru",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#101317",
+  "theme_color": "#0f766e",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

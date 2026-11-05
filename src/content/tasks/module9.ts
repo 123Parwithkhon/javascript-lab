@@ -1,0 +1,145 @@
+import type { Task } from '../types';
+
+export const module9Tasks: Task[] = [
+  {
+    id: 'scope-block',
+    moduleId: 9,
+    topic: 'область видимости',
+    level: 'easy',
+    title: 'Переменная за скобками',
+    theory: 'Переменная, созданная через let или const внутри { }, существует только внутри этих скобок. Снаружи её имя неизвестно, поэтому возникает ReferenceError.',
+    example: 'if (true) {\n  const inner = 1;\n  console.log(inner); // работает\n}',
+    description: 'Запустите код и прочитайте ошибку. Исправьте программу, чтобы она вывела «Сдал», если score равен 50 или больше, и «Не сдал» в остальных случаях.',
+    initialCode:
+      '// Переменная score уже существует\nif (score >= 50) {\n  let result = "Сдал";\n} else {\n  let result = "Не сдал";\n}\n\nconsole.log(result);\n',
+    cases: [
+      { label: 'score = 70', givens: { score: 70 }, output: ['Сдал'] },
+      { label: 'score = 50', givens: { score: 50 }, output: ['Сдал'] },
+      { label: 'score = 20', givens: { score: 20 }, output: ['Не сдал'] },
+    ],
+    hints: ['console.log находится вне блоков, где создана переменная.', 'Объявите переменную один раз перед if, а внутри только присваивайте значение.'],
+    solution: 'let result;\nif (score >= 50) {\n  result = "Сдал";\n} else {\n  result = "Не сдал";\n}\n\nconsole.log(result);\n',
+    explanation: 'Переменная должна быть объявлена в той области, где её читают. Иначе каждая ветка создавала свою отдельную переменную, которая исчезала вместе с блоком.',
+  },
+  {
+    id: 'scope-shadowing',
+    moduleId: 9,
+    topic: 'локальные переменные',
+    level: 'medium',
+    title: 'Счётчик не растёт',
+    theory: 'Если внутри функции объявить переменную с тем же именем, что и снаружи, внешняя станет недоступной внутри функции. Это называется затенением. Без let функция меняет внешнюю переменную.',
+    description: 'Функция visit должна увеличивать общий счётчик visits и возвращать его новое значение. Сейчас она всегда возвращает 1. Найдите причину и исправьте.',
+    initialCode: 'let visits = 0;\n\nfunction visit() {\n  let visits = 0;\n  visits++;\n  return visits;\n}\n',
+    cases: [
+      {
+        label: 'Счётчик растёт при каждом вызове',
+        checks: [
+          { label: 'visit() в первый раз', expression: 'visit()', expected: 1 },
+          { label: 'visit() во второй раз', expression: 'visit()', expected: 2 },
+          { label: 'значение visits после двух вызовов', expression: 'visits', expected: 2 },
+        ],
+      },
+    ],
+    hints: ['Сколько переменных с именем visits есть в этой программе?', 'Лишнее объявление находится внутри функции.'],
+    solution: 'let visits = 0;\n\nfunction visit() {\n  visits++;\n  return visits;\n}\n',
+    explanation: 'Строка let visits создавала новую локальную переменную при каждом вызове, и внешняя не менялась. Без неё функция обращается к внешней области видимости.',
+  },
+  {
+    id: 'scope-tdz',
+    moduleId: 9,
+    topic: 'hoisting',
+    level: 'easy',
+    title: 'Раньше объявления',
+    theory: 'Объявления через function работают во всём файле, поэтому функцию можно вызвать выше её описания. А к const и let нельзя обратиться до строки с объявлением: будет ReferenceError.',
+    example: 'console.log(hello()); // работает\n\nfunction hello() {\n  return "Привет";\n}',
+    description: 'Программа падает с ошибкой. Исправьте её так, чтобы она вывела число 15.',
+    initialCode: 'console.log(price * 3);\n\nconst price = 5;\n',
+    cases: [{ label: 'Программа выводит 15', output: ['15'] }],
+    hints: ['Прочитайте текст ошибки: он говорит, что переменная ещё не готова.', 'Строки нужно расположить в другом порядке.'],
+    solution: 'const price = 5;\n\nconsole.log(price * 3);\n',
+    explanation: 'JavaScript знает о const заранее, но до строки объявления обращаться к ней запрещено. Такое поведение защищает от использования значения, которого ещё нет.',
+  },
+  {
+    id: 'closure-multiplier',
+    moduleId: 9,
+    topic: 'замыкания',
+    level: 'medium',
+    title: 'Фабрика функций',
+    theory: 'Функция может вернуть другую функцию. Внутренняя функция помнит переменные места, где она создана, даже когда внешняя уже завершилась. Это и есть замыкание.',
+    example: 'function makeGreeter(word) {\n  return (name) => `${word}, ${name}!`;\n}\n\nconst hello = makeGreeter("Салом");\nconsole.log(hello("Parviz"));',
+    description: 'Напишите функцию makeMultiplier(factor), которая возвращает функцию, умножающую свой аргумент на factor.',
+    initialCode: 'function makeMultiplier(factor) {\n  // Ваш код\n}\n',
+    cases: [
+      {
+        label: 'Созданные функции помнят свой множитель',
+        checks: [
+          { label: 'makeMultiplier(2)(5)', expression: 'makeMultiplier(2)(5)', expected: 10 },
+          { label: 'makeMultiplier(3)(5)', expression: 'makeMultiplier(3)(5)', expected: 15 },
+          {
+            label: 'две функции работают независимо',
+            expression: '(() => { const double = makeMultiplier(2); const triple = makeMultiplier(3); return [double(1), triple(1), double(2)]; })()',
+            expected: [2, 3, 4],
+          },
+        ],
+      },
+    ],
+    hints: ['Результатом makeMultiplier должна быть функция, а не число.', 'Внутренняя функция принимает один параметр и может использовать factor.'],
+    solution: 'function makeMultiplier(factor) {\n  return (value) => value * factor;\n}\n',
+    explanation: 'Каждый вызов makeMultiplier создаёт новое значение factor, и возвращённая функция хранит ссылку именно на него. Так из общего шаблона получаются готовые настроенные функции.',
+  },
+  {
+    id: 'closure-counter',
+    moduleId: 9,
+    topic: 'замыкания',
+    level: 'hard',
+    title: 'Личный счётчик',
+    theory: 'Замыкание позволяет хранить данные, к которым нет доступа снаружи. Переменная объявляется во внешней функции, а внутренняя может её менять. Так создают приватное состояние.',
+    description: 'Напишите функцию makeCounter(), которая возвращает функцию. Каждый вызов этой функции возвращает следующее число: 1, 2, 3 и так далее. Счётчики не должны влиять друг на друга.',
+    initialCode: 'function makeCounter() {\n  // Ваш код\n}\n',
+    cases: [
+      {
+        label: 'Счётчик считает, и счётчики независимы',
+        checks: [
+          {
+            label: 'три вызова одного счётчика',
+            expression: '(() => { const next = makeCounter(); return [next(), next(), next()]; })()',
+            expected: [1, 2, 3],
+          },
+          {
+            label: 'два разных счётчика',
+            expression: '(() => { const a = makeCounter(); const b = makeCounter(); a(); a(); return [a(), b()]; })()',
+            expected: [3, 1],
+          },
+        ],
+      },
+    ],
+    hints: [
+      'Значение должно сохраняться между вызовами, поэтому объявите его вне внутренней функции.',
+      'Глобальная переменная не подойдёт: счётчики станут общими.',
+      'Переменная создаётся внутри makeCounter, а меняется внутри возвращаемой функции.',
+    ],
+    solution: 'function makeCounter() {\n  let count = 0;\n  return () => {\n    count++;\n    return count;\n  };\n}\n',
+    explanation: 'Каждый вызов makeCounter создаёт новую переменную count, и добраться до неё можно только через возвращённую функцию. Такие задачи часто дают на собеседованиях.',
+  },
+  {
+    id: 'closure-loop',
+    moduleId: 9,
+    topic: 'var и let',
+    level: 'hard',
+    title: 'Ловушка var',
+    theory: 'У var нет блочной области видимости: на весь цикл одна переменная. У let на каждом шаге цикла своя. Если создавать функции в цикле с var, все они будут видеть одно и то же итоговое значение.',
+    description: 'Функция makeFunctions должна вернуть три функции, которые возвращают 0, 1 и 2. Сейчас все они возвращают 3. Исправьте это.',
+    initialCode: 'function makeFunctions() {\n  const result = [];\n  for (var i = 0; i < 3; i++) {\n    result.push(() => i);\n  }\n  return result;\n}\n',
+    cases: [
+      {
+        label: 'Каждая функция помнит своё значение',
+        checks: [
+          { label: 'результаты трёх функций', expression: 'makeFunctions().map((f) => f())', expected: [0, 1, 2] },
+        ],
+      },
+    ],
+    hints: ['Сейчас все три функции видят одну и ту же переменную.', 'Достаточно изменить одно слово в объявлении счётчика.'],
+    solution: 'function makeFunctions() {\n  const result = [];\n  for (let i = 0; i < 3; i++) {\n    result.push(() => i);\n  }\n  return result;\n}\n',
+    explanation: 'С var функции замыкаются на одну переменную, которая к концу цикла равна 3. С let на каждом шаге своя копия. Это главная причина, почему в новом коде не используют var.',
+  },
+];

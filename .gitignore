@@ -5,3 +5,4 @@ playwright-report
 *.local
 ~$*
 js.docx
+.browsers

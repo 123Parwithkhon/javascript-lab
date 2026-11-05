@@ -8,4 +8,8 @@ export const LIMITS = {
   maxOutputLines: 1000,
   /** Максимальный суммарный размер вывода в символах. */
   maxOutputChars: 100_000,
+  /** Размер холста для pixel(x, y, color) в клетках. */
+  gridSize: 32,
+  /** Максимальное число вызовов pixel за один запуск. */
+  maxPixels: 5000,
 } as const;

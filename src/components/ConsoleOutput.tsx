@@ -5,21 +5,23 @@ interface ConsoleOutputProps {
   lines: OutputLine[];
   result: RunResult | null;
   running: boolean;
+  /** Программа что-то нарисовала: это тоже результат, хотя в консоли пусто. */
+  drew?: boolean;
 }
 
-function StatusMessage({ result, hasOutput }: { result: RunResult; hasOutput: boolean }) {
+export function RunStatus({ result, hasOutput }: { result: RunResult; hasOutput: boolean }) {
   switch (result.status) {
     case 'success':
       return (
-        <p className="console__status console__status--success">
+        <p className="status status--success">
           ✓ {hasOutput ? t.runner.success : t.runner.successNoOutput}
         </p>
       );
     case 'error': {
       const { name, message, line } = result.error;
       return (
-        <div className="console__status console__status--error">
-          <p className="console__error-title">
+        <div className="status status--error">
+          <p className="status__code">
             {name}: {message}
             {line !== null && ` (${t.runner.errorAtLine.toLowerCase()} ${line})`}
           </p>
@@ -28,19 +30,19 @@ function StatusMessage({ result, hasOutput }: { result: RunResult; hasOutput: bo
       );
     }
     case 'timeout':
-      return <p className="console__status console__status--error">{t.runner.timeout}</p>;
+      return <p className="status status--error">{t.runner.timeout}</p>;
     case 'output-limit':
-      return <p className="console__status console__status--error">{t.runner.outputLimit}</p>;
+      return <p className="status status--error">{t.runner.outputLimit}</p>;
     case 'code-too-large':
-      return <p className="console__status console__status--error">{t.runner.codeTooLarge}</p>;
+      return <p className="status status--error">{t.runner.codeTooLarge}</p>;
     case 'sandbox-failed':
-      return <p className="console__status console__status--error">{t.runner.sandboxFailed}</p>;
+      return <p className="status status--error">{t.runner.sandboxFailed}</p>;
     case 'stopped':
-      return <p className="console__status">{t.runner.stopped}</p>;
+      return <p className="status">{t.runner.stopped}</p>;
   }
 }
 
-export function ConsoleOutput({ lines, result, running }: ConsoleOutputProps) {
+export function ConsoleOutput({ lines, result, running, drew = false }: ConsoleOutputProps) {
   const isEmpty = lines.length === 0 && !result && !running;
 
   return (
@@ -53,8 +55,8 @@ export function ConsoleOutput({ lines, result, running }: ConsoleOutputProps) {
             {line.text}
           </pre>
         ))}
-        {running && <p className="console__status">{t.runner.running}</p>}
-        {result && <StatusMessage result={result} hasOutput={lines.length > 0} />}
+        {running && <p className="status">{t.runner.running}</p>}
+        {result && <RunStatus result={result} hasOutput={lines.length > 0 || drew} />}
       </div>
     </div>
   );

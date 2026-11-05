@@ -1,10 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Браузеры для тестов занимают больше гигабайта, поэтому храним их в папке проекта.
+process.env.PLAYWRIGHT_BROWSERS_PATH ??= `${import.meta.dirname}/.browsers`;
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   reporter: 'list',
-  use: { baseURL: 'http://localhost:4173' },
+  // Песочница стартует дольше, когда браузеры работают параллельно.
+  expect: { timeout: 15_000 },
+  // Кэш для работы без сети проверяет отдельный тест, остальным он не нужен.
+  use: { baseURL: 'http://localhost:4173', serviceWorkers: 'block' },
   webServer: {
     command: 'npm run build && npm run preview -- --port 4173 --strictPort',
     url: 'http://localhost:4173',

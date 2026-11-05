@@ -1,12 +1,11 @@
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { expect, test, type Page } from '@playwright/test';
+import { setCode } from './helpers';
 
 async function runInPlayground(page: Page, code: string) {
   await page.goto('/playground');
-  const editor = page.locator('.cm-content');
-  await expect(editor).toBeVisible();
-  await editor.fill(code);
+  await setCode(page, code);
   await page.getByRole('button', { name: 'Запустить' }).click();
 }
 
@@ -46,7 +45,7 @@ test('бесконечный цикл останавливается, а стр�
   await expect(page.getByRole('button', { name: 'Остановить' })).toBeVisible();
   // Этот вызов зависнет, если цикл блокирует основной поток страницы.
   expect(await page.evaluate(() => 1 + 1)).toBe(2);
-  await expect(consoleBox(page)).toContainText('дольше 3 секунд', { timeout: 6000 });
+  await expect(consoleBox(page)).toContainText('дольше 3 секунд');
 });
 
 test('кнопка «Остановить» прерывает выполнение', async ({ page }) => {
@@ -57,7 +56,7 @@ test('кнопка «Остановить» прерывает выполнен�
 
 test('поток вывода ограничивается', async ({ page }) => {
   await runInPlayground(page, 'while (true) { console.log("x"); }\n');
-  await expect(consoleBox(page)).toContainText('слишком много текста', { timeout: 6000 });
+  await expect(consoleBox(page)).toContainText('слишком много данных');
 });
 
 test('прямая отправка сообщений в обход console тоже ограничивается', async ({ page }) => {
@@ -65,7 +64,7 @@ test('прямая отправка сообщений в обход console т�
     page,
     'while (true) { postMessage({ type: "log", level: "log", text: "x" }); }\n',
   );
-  await expect(consoleBox(page)).toContainText('слишком много текста', { timeout: 6000 });
+  await expect(consoleBox(page)).toContainText('слишком много данных');
 });
 
 test('код не имеет доступа к сети', async ({ page }) => {
@@ -94,14 +93,14 @@ test('код не имеет доступа к сети', async ({ page }) => {
         'console.log("КОНЕЦ");',
       ].join('\n'),
     );
-    await expect(consoleBox(page)).toContainText('КОНЕЦ', { timeout: 5000 });
+    await expect(consoleBox(page)).toContainText('КОНЕЦ');
     await expect(consoleBox(page)).toContainText('Программа завершилась');
     await page.waitForTimeout(300);
     expect(hits).toEqual([]);
 
-    // Контроль: с самой страницы приёмник доступен, значит, тест умеет видеть утечку.
-    await page.evaluate((url) => fetch(`${url}/control`, { mode: 'no-cors' }), sink);
-    await expect.poll(() => hits).toEqual(['/control']);
+    // Контроль: приёмник работает, значит, тест умеет видеть утечку.
+    await page.request.get(`${sink}/control`);
+    expect(hits).toEqual(['/control']);
   } finally {
     server.closeAllConnections();
     server.close();

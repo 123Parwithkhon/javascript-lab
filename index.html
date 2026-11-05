@@ -7,7 +7,16 @@
       name="description"
       content="Учите JavaScript прямо в браузере: без установки программ и без регистрации."
     />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#0f766e" />
     <title>JavaScript Lab</title>
+    <script>
+      try {
+        const theme = localStorage.getItem('jslab.theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

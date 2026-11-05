@@ -1,0 +1,35 @@
+// Этот файл собирается в sw.js: список файлов и версия подставляются при сборке.
+const CACHE = 'jslab-__VERSION__';
+const FILES = __FILES__;
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches
+      .open(CACHE)
+      .then((cache) => cache.addAll(FILES))
+      .then(() => self.skipWaiting()),
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim()),
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+
+  // Страницы берём из сети, чтобы видеть обновления, а без сети — из кэша.
+  if (request.mode === 'navigate') {
+    event.respondWith(fetch(request).catch(() => caches.match('/index.html', { ignoreVary: true })));
+    return;
+  }
+
+  // В именах файлов сборки есть хеш, поэтому их содержимое не меняется.
+  event.respondWith(caches.match(request, { ignoreVary: true }).then((cached) => cached ?? fetch(request)));
+});

@@ -1,0 +1,128 @@
+import type { Lesson } from './types';
+
+export const advancedLessons: Lesson[] = [
+  {
+    slug: 'strings-numbers-dates',
+    moduleId: 8,
+    level: 'medium',
+    title: 'Строки, числа и даты',
+    summary: 'Методы строк, округление и вычисления с датами.',
+    explanation: [
+      'У строк есть много методов: toUpperCase, trim, includes, startsWith, endsWith, split. Строку нельзя изменить на месте, поэтому метод всегда возвращает новую.',
+      'split разбивает строку в массив, а join собирает обратно. Эта пара открывает для строк все методы массивов.',
+      'Math содержит полезные функции: round, floor, max, random. Метод toFixed округляет, но возвращает строку: об этом часто забывают.',
+      'Дата внутри — это число миллисекунд с 1970 года, поэтому разницу дат считают обычным вычитанием. Месяцы в Date нумеруются с нуля: январь — это 0.',
+    ],
+    analogy:
+      'Строка — как бусы: split рассыпает их на отдельные бусины, с которыми можно работать по одной, а join снова нанизывает на нитку.',
+    code: 'const text = "  Салом, Душанбе  ";\n\nconsole.log(text.trim().toUpperCase());\nconsole.log(text.includes("Душанбе"));\nconsole.log("а-б-в".split("-").join("+"));\n\nconsole.log(Math.round(2.6));\nconsole.log(Math.round(1.236 * 100) / 100);\n\nconst start = new Date("2026-01-01");\nconst end = new Date("2026-01-11");\nconst days = (end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000);\nconsole.log(days);',
+    output: ['САЛОМ, ДУШАНБЕ', 'true', 'а+б+в', '3', '1.24', '10'],
+    lines: [
+      { code: 'text.trim().toUpperCase()', note: 'Цепочка: trim убрал пробелы по краям, и его результат перевели в верхний регистр.' },
+      { code: '.split("-").join("+")', note: 'Строка превратилась в массив, а затем обратно в строку с другим разделителем.' },
+      { code: 'Math.round(1.236 * 100) / 100', note: 'Приём округления до сотых. В результате получается число, а не строка.' },
+      { code: 'end.getTime() - start.getTime()', note: 'Разность дат в миллисекундах. Осталось разделить на длину суток.' },
+    ],
+    tryPrompt: 'Переверните своё имя: split(""), reverse() и join(""). Посчитайте, сколько дней осталось до Нового года.',
+    tryCode: 'const word = "Душанбе";\n\nconsole.log(word.length);\nconsole.log(word[0]);\nconsole.log(word.split("").reverse().join(""));\nconsole.log(Math.floor(Math.random() * 6) + 1 > 0);\n',
+    recap: [
+      'Методы строк возвращают новую строку.',
+      'split и join переводят между строкой и массивом.',
+      'toFixed возвращает строку, а Math.round — число.',
+      'Даты вычитают через getTime(), месяцы в Date считаются с нуля.',
+    ],
+  },
+  {
+    slug: 'scope-closures',
+    moduleId: 9,
+    level: 'hard',
+    title: 'Область видимости и замыкания',
+    summary: 'Где живут переменные и как функция запоминает своё окружение.',
+    explanation: [
+      'Область видимости определяет, где доступна переменная. let и const живут внутри своих фигурных скобок. Из внутренней области видно внешнюю, но не наоборот.',
+      'Поиск имени идёт изнутри наружу: JavaScript ищет переменную в текущей области, затем во внешней, и так до самого верха. Если внутри объявить такое же имя, внешнее будет затенено.',
+      'Hoisting: объявление function работает во всём файле ещё до своей строки. К let и const до объявления обращаться нельзя, будет ReferenceError.',
+      'Замыкание — это функция вместе с переменными места, где её создали. Она помнит их, даже когда внешняя функция уже завершилась. Так создают приватные данные.',
+    ],
+    analogy:
+      'Замыкание похоже на рюкзак: уходя из дома, функция забирает с собой нужные вещи и пользуется ими где угодно. Заглянуть в чужой рюкзак снаружи нельзя.',
+    code: 'function makeCounter() {\n  let count = 0;\n  return () => {\n    count++;\n    return count;\n  };\n}\n\nconst first = makeCounter();\nconst second = makeCounter();\n\nconsole.log(first());\nconsole.log(first());\nconsole.log(second());',
+    output: ['1', '2', '1'],
+    lines: [
+      { code: 'let count = 0;', note: 'Локальная переменная. Снаружи функции добраться до неё нельзя.' },
+      { code: 'return () => {', note: 'Функция возвращает другую функцию, и та видит count благодаря замыканию.' },
+      { code: 'const second = makeCounter();', note: 'Новый вызов создаёт новую переменную count, поэтому счётчики независимы.' },
+    ],
+    tryPrompt: 'Создайте третий счётчик. Попробуйте вывести count снаружи функции и прочитайте ошибку.',
+    tryCode: 'function makeGreeter(word) {\n  return (name) => `${word}, ${name}!`;\n}\n\nconst hello = makeGreeter("Салом");\nconst bye = makeGreeter("Пока");\n\nconsole.log(hello("Parviz"));\nconsole.log(bye("Madina"));\n',
+    recap: [
+      'let и const видны только внутри своего блока.',
+      'Имя ищется изнутри наружу.',
+      'Замыкание помнит переменные места создания.',
+      'Каждый вызов внешней функции создаёт новые переменные.',
+    ],
+  },
+  {
+    slug: 'modern-js',
+    moduleId: 10,
+    level: 'hard',
+    title: 'Современный JavaScript',
+    summary: 'Операторы ?. и ??, Set, Map, классы и наследование.',
+    explanation: [
+      'Оператор ?. безопасно читает свойство, если объекта может не быть. Оператор ?? подставляет значение только вместо null и undefined, поэтому 0 и пустая строка остаются.',
+      'Set хранит уникальные значения, а Map — пары «ключ — значение» с ключом любого типа.',
+      'Класс — это шаблон для объектов: constructor заполняет свойства, а методы доступны каждому экземпляру. this указывает на объект, у которого вызван метод. Наследник создаётся через extends и вызывает конструктор родителя через super.',
+      'Модули разбивают программу на файлы: export делает значение доступным, а import подключает его в другом файле. В этой песочнице один файл, поэтому модули встретятся вам в проектах.',
+    ],
+    analogy:
+      'Класс — это чертёж дома, а объект — построенный по нему дом. Наследование похоже на новый чертёж на основе старого: всё то же самое, плюс гараж.',
+    code: 'class Employee {\n  constructor(name, salary) {\n    this.name = name;\n    this.salary = salary;\n  }\n\n  income() {\n    return this.salary;\n  }\n}\n\nclass Manager extends Employee {\n  constructor(name, salary, bonus) {\n    super(name, salary);\n    this.bonus = bonus;\n  }\n\n  income() {\n    return super.income() + this.bonus;\n  }\n}\n\nconsole.log(new Manager("Али", 100, 20).income());\n\nconst user = {};\nconsole.log(user.address?.city ?? "город не указан");\nconsole.log([...new Set([1, 1, 2])]);',
+    output: ['120', 'город не указан', '[1, 2]'],
+    lines: [
+      { code: 'constructor(name, salary)', note: 'Выполняется при вызове new и заполняет свойства нового объекта.' },
+      { code: 'class Manager extends Employee', note: 'Manager получает всё от Employee и может менять поведение.' },
+      { code: 'super(name, salary);', note: 'Запускает конструктор родителя. В наследнике это нужно сделать до обращения к this.' },
+      { code: 'user.address?.city ?? "город не указан"', note: 'Адреса нет, поэтому ?. даёт undefined, а ?? подставляет запасное значение.' },
+      { code: '[...new Set([1, 1, 2])]', note: 'Set убрал повтор, а spread превратил его обратно в массив.' },
+    ],
+    tryPrompt: 'Добавьте классу Rectangle метод perimeter(). Сравните 0 || 10 и 0 ?? 10.',
+    tryCode: 'class Rectangle {\n  constructor(width, height) {\n    this.width = width;\n    this.height = height;\n  }\n\n  area() {\n    return this.width * this.height;\n  }\n}\n\nconsole.log(new Rectangle(3, 4).area());\nconsole.log(0 || 10);\nconsole.log(0 ?? 10);\n',
+    recap: [
+      '?. защищает от чтения свойства у несуществующего объекта.',
+      '?? заменяет только null и undefined.',
+      'Set — уникальные значения, Map — пары с любыми ключами.',
+      'Класс задаёт шаблон, extends и super отвечают за наследование.',
+    ],
+  },
+  {
+    slug: 'errors',
+    moduleId: 11,
+    level: 'hard',
+    title: 'Обработка ошибок',
+    summary: 'Как читать ошибки, перехватывать их и сообщать о проблемах самому.',
+    explanation: [
+      'Основные типы ошибок: SyntaxError (код написан неверно), ReferenceError (имя не найдено), TypeError (операция не подходит для значения), RangeError (значение вне диапазона).',
+      'try выполняет код, а при ошибке управление сразу переходит в catch, и программа продолжает работу. finally выполняется всегда, при успехе и при ошибке.',
+      'throw позволяет сообщить об ошибке самому. Это лучше, чем молча вернуть неверное значение: проблема становится видна сразу и там, где она возникла. Пишите в сообщении, что произошло и что ожидалось.',
+      'Stack trace показывает цепочку вызовов до ошибки. Начинайте чтение с самой верхней строки, относящейся к вашему коду. При отладке выводите значения через console.log и проверяйте свои предположения.',
+    ],
+    analogy:
+      'try...catch похож на страховку альпиниста: вы идёте по маршруту (try), при срыве вас ловит страховка (catch), а спуститься и убрать снаряжение нужно в любом случае (finally).',
+    code: 'function divide(a, b) {\n  if (b === 0) {\n    throw new Error("Деление на ноль");\n  }\n  return a / b;\n}\n\ntry {\n  console.log(divide(10, 2));\n  console.log(divide(1, 0));\n  console.log("Эта строка не выполнится");\n} catch (error) {\n  console.log(error.name);\n  console.log(error.message);\n} finally {\n  console.log("Проверка завершена");\n}',
+    output: ['5', 'Error', 'Деление на ноль', 'Проверка завершена'],
+    lines: [
+      { code: 'throw new Error("Деление на ноль");', note: 'Создаёт ошибку и немедленно завершает функцию.' },
+      { code: 'console.log(divide(1, 0));', note: 'Здесь возникает ошибка, поэтому оставшийся код в try пропускается.' },
+      { code: 'catch (error)', note: 'В переменной error находится объект ошибки со свойствами name и message.' },
+      { code: 'finally {', note: 'Этот блок выполняется при любом исходе.' },
+    ],
+    tryPrompt: 'Уберите блок try...catch и посмотрите, как изменится результат. Затем замените Error на RangeError.',
+    tryCode: 'try {\n  const user = null;\n  console.log(user.name);\n} catch (error) {\n  console.log(error.name);\n}\n\ntry {\n  JSON.parse("не json");\n} catch (error) {\n  console.log(error.name);\n}\n\nconsole.log("Программа продолжает работу");\n',
+    recap: [
+      'Имя ошибки подсказывает, где искать причину.',
+      'try...catch не даёт ошибке остановить программу.',
+      'finally выполняется всегда.',
+      'throw с понятным сообщением лучше, чем молчаливый неверный результат.',
+    ],
+  },
+];
