@@ -80,6 +80,42 @@ export const QUIZZES: Record<string, LessonQuiz> = {
     answer: 1,
     why: 'throw сразу переходит в catch, поэтому строка с «Б» не выполняется.',
   },
+  dom: {
+    code: 'const saved = String(41);\nconsole.log(saved + 1);',
+    options: ['42', '411', 'null', 'ошибка'],
+    answer: 1,
+    why: 'В localStorage значения хранятся строками. Строка плюс число дают склейку, поэтому перед вычислением нужен Number().',
+  },
+  projects: {
+    code: 'const todos = [{ done: true }, { done: false }, { done: false }];\nconsole.log(todos.filter((todo) => !todo.done).length);',
+    options: ['1', '2', '3', '0'],
+    answer: 1,
+    why: 'filter оставляет невыполненные задачи: их две. Так считаются счётчики в настоящих приложениях.',
+  },
+  'advanced-types': {
+    code: 'console.log(typeof null);\nconsole.log(0.1 + 0.2 === 0.3);',
+    options: ['null true', 'object true', 'object false', 'null false'],
+    answer: 2,
+    why: 'typeof null даёт object из-за старой ошибки языка, которую нельзя исправить. А дробные числа хранятся с погрешностью, поэтому 0.1 + 0.2 не равно 0.3 в точности.',
+  },
+  'advanced-functions': {
+    code: 'const user = {\n  name: "Parviz",\n  hi() {\n    return this.name;\n  },\n};\n\nconsole.log(user.hi.call({ name: "Али" }));',
+    options: ['Parviz', 'Али', 'undefined', 'ошибка'],
+    answer: 1,
+    why: 'call задаёт this при вызове, поэтому имя объекта, к которому принадлежал метод, не важно.',
+  },
+  'advanced-async': {
+    code: 'setTimeout(() => console.log("А"), 0);\nPromise.resolve().then(() => console.log("Б"));\nconsole.log("В");',
+    options: ['А Б В', 'В А Б', 'В Б А', 'Б В А'],
+    answer: 2,
+    why: 'Сначала весь обычный код, затем микрозадачи (then) и только потом макрозадачи (setTimeout).',
+  },
+  algorithms: {
+    code: 'const a = [1, 2];\nconst b = [1, 2];\nconsole.log(a === b);\nconsole.log(new Set([...a, ...b]).size);',
+    options: ['true 4', 'false 2', 'false 4', 'true 2'],
+    answer: 1,
+    why: 'Массивы сравниваются по ссылке, а это два разных массива. Set хранит только уникальные значения, поэтому их два.',
+  },
   async: {
     code: 'setTimeout(() => console.log("А"), 0);\nconsole.log("Б");',
     options: ['А Б', 'Б А', 'А', 'Б'],

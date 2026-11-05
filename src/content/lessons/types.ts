@@ -1,3 +1,4 @@
+import type { DomPage } from '../../sandbox/domFrame';
 import type { TaskLevel } from '../types';
 
 export interface LessonLine {
@@ -21,6 +22,8 @@ export interface Lesson {
   code: string;
   /** Служебный код перед примерами, например учебный fetch. */
   setup?: string;
+  /** Страница для примеров, если урок про работу с браузером. */
+  dom?: DomPage;
   /** Что выводит пример. Тесты запускают код и сверяют результат. */
   output: string[];
   lines: LessonLine[];

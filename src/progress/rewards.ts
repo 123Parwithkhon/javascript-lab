@@ -11,7 +11,7 @@ const LEVEL_POINTS: Record<TaskLevel, number> = { easy: 10, medium: 20, hard: 30
 const CLEAN_BONUS = 5;
 
 /** Пороги рангов в очках. Названия лежат в текстах интерфейса. */
-export const RANK_THRESHOLDS = [0, 50, 150, 300, 500, 800, 1200] as const;
+export const RANK_THRESHOLDS = [0, 50, 200, 500, 900, 1400, 2000] as const;
 
 export function taskPoints(task: Task, clean: boolean): number {
   return LEVEL_POINTS[task.level] + (clean ? CLEAN_BONUS : 0);
@@ -84,6 +84,13 @@ export const ACHIEVEMENT_IDS = [
   'modern-done',
   'errors-done',
   'async-done',
+  'dom-done',
+  'first-project',
+  'projects-done',
+  'internals-done',
+  'functions-pro-done',
+  'async-pro-done',
+  'algorithms-done',
   'clean-five',
   'clean-hard',
   'streak-three',
@@ -115,6 +122,13 @@ export function earnedAchievements(tasks: Task[], data: RewardData, now: Date): 
     'modern-done': moduleDone(10),
     'errors-done': moduleDone(11),
     'async-done': moduleDone(12),
+    'dom-done': moduleDone(13),
+    'first-project': tasks.some((task) => task.moduleId === 14 && data.solved[task.id]),
+    'projects-done': moduleDone(14),
+    'internals-done': moduleDone(15),
+    'functions-pro-done': moduleDone(16),
+    'async-pro-done': moduleDone(17),
+    'algorithms-done': moduleDone(18),
     'clean-five': clean.length >= 5,
     'clean-hard': clean.some((task) => task.level === 'hard'),
     'streak-three': best >= 3,

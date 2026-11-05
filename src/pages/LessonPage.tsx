@@ -73,7 +73,7 @@ export function LessonPage() {
       <section>
         <h2>{t.lesson.tryIt}</h2>
         <p>{lesson.tryPrompt}</p>
-        <CodeRunner key={lesson.slug} initialCode={lesson.tryCode} setup={lesson.setup} />
+        <CodeRunner key={lesson.slug} initialCode={lesson.tryCode} setup={lesson.setup} dom={lesson.dom} />
       </section>
 
       {quiz && <QuizBlock key={lesson.slug} quiz={quiz} />}

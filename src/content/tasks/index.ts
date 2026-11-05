@@ -4,6 +4,12 @@ import { module1Tasks } from './module1';
 import { module10Tasks } from './module10';
 import { module11Tasks } from './module11';
 import { module12Tasks } from './module12';
+import { module13Tasks } from './module13';
+import { module14Tasks } from './module14';
+import { module15Tasks } from './module15';
+import { module16Tasks } from './module16';
+import { module17Tasks } from './module17';
+import { module18Tasks } from './module18';
 import { module2Tasks } from './module2';
 import { module3Tasks } from './module3';
 import { module4Tasks } from './module4';
@@ -28,6 +34,12 @@ export const TASKS: Task[] = [
   ...module10Tasks,
   ...module11Tasks,
   ...module12Tasks,
+  ...module13Tasks,
+  ...module14Tasks,
+  ...module15Tasks,
+  ...module16Tasks,
+  ...module17Tasks,
+  ...module18Tasks,
 ];
 
 export function findTask(id: string | undefined): Task | undefined {

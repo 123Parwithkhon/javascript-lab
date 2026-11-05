@@ -879,6 +879,72 @@ a.task-card:hover {
   font-size: 0.92rem;
 }
 
+/* Страница программы и проекты */
+.dom-preview:empty {
+  display: none;
+}
+
+.dom-preview__frame {
+  display: block;
+  width: 100%;
+  height: 280px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.code-block--wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.project-card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.project-card h3 {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.project-card p,
+.project-card ol {
+  margin: 0;
+}
+
+.project-card ol {
+  padding-left: 20px;
+}
+
+.project-card .button {
+  margin-top: auto;
+}
+
+.project-card--locked {
+  background: transparent;
+  color: var(--muted);
+}
+
 /* Награды и профиль */
 .hero__work {
   display: grid;
@@ -1106,12 +1172,15 @@ a.task-card:hover {
   }
 
   .site-nav a {
-    padding: 10px 4px;
-    font-size: 0.9rem;
+    padding: 8px 2px;
+    font-size: 0.86rem;
   }
 
   .site-nav {
-    gap: 2px;
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: space-between;
+    gap: 0;
   }
 
   .site-header__inner {
@@ -1119,8 +1188,12 @@ a.task-card:hover {
     padding-block: 6px;
   }
 
+  /* Логотип и тема в первой строке, всё меню во второй. */
   .site-header__end {
-    flex: 1 1 100%;
-    justify-content: space-between;
+    display: contents;
+  }
+
+  .theme-toggle {
+    margin-left: auto;
   }
 }

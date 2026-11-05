@@ -16,6 +16,7 @@ const LearnPage = page(() => import('./pages/LearnPage'), 'LearnPage');
 const LessonPage = page(() => import('./pages/LessonPage'), 'LessonPage');
 const NotFoundPage = page(() => import('./pages/NotFoundPage'), 'NotFoundPage');
 const PlaygroundPage = page(() => import('./pages/PlaygroundPage'), 'PlaygroundPage');
+const ProjectsPage = page(() => import('./pages/ProjectsPage'), 'ProjectsPage');
 const ProfilePage = page(() => import('./pages/ProfilePage'), 'ProfilePage');
 const TaskPage = page(() => import('./pages/TaskPage'), 'TaskPage');
 const TrainerPage = page(() => import('./pages/TrainerPage'), 'TrainerPage');
@@ -37,6 +38,7 @@ export function App() {
                     <Route path="trainer" element={<TrainerPage />} />
                     <Route path="trainer/:id" element={<TaskPage />} />
                     <Route path="playground" element={<PlaygroundPage />} />
+                    <Route path="projects" element={<ProjectsPage />} />
                     <Route path="profile" element={<ProfilePage />} />
                     <Route path="about" element={<AboutPage />} />
                     <Route path="*" element={<NotFoundPage />} />

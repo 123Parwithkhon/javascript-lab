@@ -17,6 +17,7 @@ export function Layout() {
             <nav className="site-nav" aria-label="Основная навигация">
               <NavLink to="/learn">{t.nav.learn}</NavLink>
               <NavLink to="/trainer">{t.nav.trainer}</NavLink>
+              <NavLink to="/projects">{t.nav.projects}</NavLink>
               <NavLink to="/playground">{t.nav.playground}</NavLink>
               <NavLink to="/profile">{t.nav.profile}</NavLink>
             </nav>

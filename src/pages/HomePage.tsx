@@ -60,6 +60,9 @@ export function HomePage() {
 
       <section className="container section">
         <h2>{t.home.projectsTitle}</h2>
+        <p>
+          <Link to="/projects">{t.projects.toAll}</Link>
+        </p>
         <ul className="project-list">
           {t.home.projects.map((project) => (
             <li key={project}>{project}</li>

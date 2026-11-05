@@ -100,6 +100,12 @@ function TaskWorkspace({ task }: { task: Task }) {
         {task.example && <pre className="code-block">{task.example}</pre>}
         <h2>{t.task.taskTitle}</h2>
         <p className="task__description">{task.description}</p>
+        {task.dom && (
+          <>
+            <h2>{t.task.pageHtml}</h2>
+            <pre className="code-block code-block--wrap">{task.dom.html}</pre>
+          </>
+        )}
         {firstCase.givens && (
           <p className="task__givens">
             {t.task.givensOnRun} <code>{formatGivens(firstCase.givens)}</code>
@@ -119,6 +125,7 @@ function TaskWorkspace({ task }: { task: Task }) {
           startCode={startCode}
           givens={firstCase.givens}
           setup={task.setup}
+          dom={task.dom}
           onCodeChange={onCodeChange}
           busy={checking}
           renderActions={(code) =>

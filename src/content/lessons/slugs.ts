@@ -16,4 +16,10 @@ export const LESSON_SLUGS: Record<number, string> = {
   10: 'modern-js',
   11: 'errors',
   12: 'async',
+  13: 'dom',
+  14: 'projects',
+  15: 'advanced-types',
+  16: 'advanced-functions',
+  17: 'advanced-async',
+  18: 'algorithms',
 };

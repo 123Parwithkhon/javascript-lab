@@ -5,7 +5,7 @@ import { TASKS } from '../src/content/tasks';
 import { setCode } from './helpers';
 
 test('данные уроков согласованы с курсом', () => {
-  expect(LESSONS).toHaveLength(13);
+  expect(LESSONS).toHaveLength(19);
   expect(new Set(LESSONS.map((lesson) => lesson.slug)).size).toBe(LESSONS.length);
 
   const taskModules = new Set(TASKS.map((task) => task.moduleId));
@@ -63,6 +63,15 @@ test('из урока можно перейти к следующему, а за
   await page.goto('/trainer/first-variable');
   await page.getByRole('link', { name: 'Урок по этой теме' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Переменные и типы данных' })).toBeVisible();
+});
+
+test('на телефоне все пункты меню помещаются в одну строку с переключателем темы', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.goto('/learn');
+  const links = page.locator('.site-nav a');
+  await expect(links).toHaveCount(5);
+  const tops = await links.evaluateAll((items) => items.map((item) => item.getBoundingClientRect().top));
+  expect(new Set(tops).size).toBe(1);
 });
 
 test('неизвестный урок показывает страницу «не найдено»', async ({ page }) => {

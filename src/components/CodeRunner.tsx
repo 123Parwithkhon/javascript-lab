@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { t } from '../i18n';
+import type { DomPage } from '../sandbox/domFrame';
+import { runDom } from '../sandbox/domRunner';
 import { runCode } from '../sandbox/runner';
 import type { JsonValue, OutputLine, Pixel, RunHandle, RunResult } from '../sandbox/types';
 import { CodeEditor } from './CodeEditor';
@@ -15,6 +17,8 @@ interface CodeRunnerProps {
   givens?: Record<string, JsonValue>;
   /** Служебный код перед программой. */
   setup?: string;
+  /** Страница, с которой работает код. Показывается под консолью. */
+  dom?: DomPage;
   onCodeChange?: (code: string) => void;
   /** Дополнительные кнопки. Получают текущий код. */
   renderActions?: (code: string) => ReactNode;
@@ -31,6 +35,7 @@ export function CodeRunner({
   startCode,
   givens,
   setup,
+  dom,
   onCodeChange,
   renderActions,
   busy = false,
@@ -41,8 +46,17 @@ export function CodeRunner({
   const [result, setResult] = useState<RunResult | null>(null);
   const [running, setRunning] = useState(false);
   const handleRef = useRef<RunHandle | null>(null);
+  // Страница остаётся работать и после запуска, поэтому хранится отдельно.
+  const pageRef = useRef<RunHandle | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => () => handleRef.current?.stop(), []);
+  useEffect(
+    () => () => {
+      handleRef.current?.stop();
+      pageRef.current?.stop();
+    },
+    [],
+  );
 
   const changeCode = (next: string) => {
     setCode(next);
@@ -55,12 +69,18 @@ export function CodeRunner({
     setPixels([]);
     setResult(null);
     setRunning(true);
-    const handle = runCode(code, (chunk) => setLines((current) => [...current, ...chunk]), {
-      globals: givens ?? {},
-      setup: setup ?? '',
-      onPixels: (chunk) => setPixels((current) => [...current, ...chunk]),
-    });
+    pageRef.current?.stop();
+    const addLines = (chunk: OutputLine[]) => setLines((current) => [...current, ...chunk]);
+    const handle =
+      dom && previewRef.current
+        ? runDom(code, addLines, { page: dom, setup, container: previewRef.current })
+        : runCode(code, addLines, {
+            globals: givens ?? {},
+            setup: setup ?? '',
+            onPixels: (chunk) => setPixels((current) => [...current, ...chunk]),
+          });
     handleRef.current = handle;
+    if (dom) pageRef.current = handle;
     const outcome = await handle.result;
     if (handleRef.current !== handle) return; // Уже начат новый запуск.
     handleRef.current = null;
@@ -104,8 +124,9 @@ export function CodeRunner({
           {t.runner.clear}
         </button>
       </div>
-      <ConsoleOutput lines={lines} result={result} running={running} drew={pixels.length > 0} />
+      <ConsoleOutput lines={lines} result={result} running={running} drew={pixels.length > 0 || Boolean(dom)} />
       {pixels.length > 0 && <PixelCanvas pixels={pixels} />}
+      {dom && <div ref={previewRef} className="dom-preview" />}
     </section>
   );
 }

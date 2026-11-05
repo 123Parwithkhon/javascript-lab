@@ -9,7 +9,7 @@ test('основной сценарий: выбрал задание, решил
   await expect(page).toHaveURL(/\/learn$/);
 
   await page.getByRole('link', { name: 'Задания', exact: true }).click();
-  await expect(page.getByText('Решено 0 из 86')).toBeVisible();
+  await expect(page.getByText('Решено 0 из 135')).toBeVisible();
 
   await page.getByRole('link', { name: /Начать: Первая строка/ }).click();
   await setCode(page, 'console.log("Привет, мир!");');
@@ -24,7 +24,7 @@ test('основной сценарий: выбрал задание, решил
 
   await page.goto('/trainer');
   await page.reload();
-  await expect(page.getByText('Решено 1 из 86')).toBeVisible();
+  await expect(page.getByText('Решено 1 из 135')).toBeVisible();
   await expect(page.getByRole('link', { name: /Продолжить: Комментарий/ })).toBeVisible();
 });
 
@@ -59,7 +59,7 @@ test('черновик кода переживает обновление стр
 test('повреждённые данные прогресса не ломают сайт', async ({ page }) => {
   await page.addInitScript((key) => localStorage.setItem(key, '{не json'), STORAGE_KEY);
   await page.goto('/trainer');
-  await expect(page.getByText('Решено 0 из 86')).toBeVisible();
+  await expect(page.getByText('Решено 0 из 135')).toBeVisible();
 });
 
 test('неверные данные прогресса не считаются решением', async ({ page }) => {
@@ -68,7 +68,7 @@ test('неверные данные прогресса не считаются �
     STORAGE_KEY,
   );
   await page.goto('/trainer');
-  await expect(page.getByText('Решено 0 из 86')).toBeVisible();
+  await expect(page.getByText('Решено 0 из 135')).toBeVisible();
 });
 
 test('неизвестное задание показывает страницу «не найдено»', async ({ page }) => {

@@ -1,3 +1,4 @@
+import type { DomPage } from '../sandbox/domFrame';
 import type { JsonValue } from '../sandbox/types';
 
 export type TaskLevel = 'easy' | 'medium' | 'hard';
@@ -29,6 +30,10 @@ export interface TaskCase {
   label: string;
   /** Значения, которые платформа передаёт программе. */
   givens?: Record<string, JsonValue>;
+  /** Разметка страницы для этого случая вместо разметки задания. */
+  html?: string;
+  /** Начальное содержимое учебного localStorage. */
+  storage?: Record<string, string>;
   /** Строки, которые программа должна вывести, точно и по порядку. Если не заданы, вывод не проверяется. */
   output?: string[];
   /** Переменные и их значения после выполнения. Значение может быть undefined. */
@@ -53,6 +58,8 @@ export interface Task {
   description: string;
   /** Служебный код перед программой ученика, например учебный fetch. */
   setup?: string;
+  /** Страница, с которой работает код. Такие задания выполняются в песочнице со страницей. */
+  dom?: DomPage;
   initialCode: string;
   cases: [TaskCase, ...TaskCase[]];
   /** От общего намёка к конкретному. Полного решения здесь быть не должно. */

@@ -1,4 +1,5 @@
 import type { Task, TaskCase } from '../content/types';
+import { runDom } from '../sandbox/domRunner';
 import { runCode } from '../sandbox/runner';
 import type { OutputLine, RunHandle, RunResult } from '../sandbox/types';
 import { evaluateCase, type CaseFailure } from './evaluate';
@@ -44,13 +45,22 @@ export function checkTask(task: Task, code: string): CheckHandle {
       if (stopped) return { status: 'stopped' };
 
       const output: OutputLine[] = [];
-      current = runCode(code, (lines) => output.push(...lines), {
-        setup: task.setup ?? '',
-        globals: taskCase.givens ?? {},
-        probe: Object.keys(taskCase.variables ?? {}),
-        calls: taskCase.calls ?? [],
-        expressions: (taskCase.checks ?? []).map((check) => check.expression),
-      });
+      const collect = (lines: OutputLine[]) => output.push(...lines);
+      const expressions = (taskCase.checks ?? []).map((check) => check.expression);
+      current = task.dom
+        ? runDom(code, collect, {
+            page: { ...task.dom, html: taskCase.html ?? task.dom.html },
+            setup: task.setup,
+            storage: taskCase.storage,
+            expressions,
+          })
+        : runCode(code, collect, {
+            setup: task.setup ?? '',
+            globals: taskCase.givens ?? {},
+            probe: Object.keys(taskCase.variables ?? {}),
+            calls: taskCase.calls ?? [],
+            expressions,
+          });
       const run = await current.result;
 
       if (run.status === 'stopped') return { status: 'stopped' };

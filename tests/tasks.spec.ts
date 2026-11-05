@@ -2,8 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 import { TASKS } from '../src/content/tasks';
 import { ADVANCED_VALID, ADVANCED_WRONG } from './advancedSolutions';
 import { ASYNC_VALID, ASYNC_WRONG } from './asyncSolutions';
+import { DOM_VALID, DOM_WRONG } from './domSolutions';
 import { EXPERT_VALID, EXPERT_WRONG } from './expertSolutions';
 import { setCode } from './helpers';
+import { MASTERY_VALID, MASTERY_WRONG } from './masterySolutions';
 
 /**
  * Неверные решения для каждого задания. Они показывают, что проверка смотрит
@@ -13,6 +15,8 @@ const WRONG_SOLUTIONS: Record<string, string[]> = {
   ...ADVANCED_WRONG,
   ...EXPERT_WRONG,
   ...ASYNC_WRONG,
+  ...DOM_WRONG,
+  ...MASTERY_WRONG,
   'first-log': ['console.log("привет, мир");', 'const text = "Привет, мир!";'],
   comments: ['console.log("Начало");\nconsole.log("Конец");\nconsole.log("Лишняя строка");'],
   'read-error': ['console.log("message");'],
@@ -113,6 +117,8 @@ const OTHER_VALID_SOLUTIONS: Record<string, string[]> = {
   ...ADVANCED_VALID,
   ...EXPERT_VALID,
   ...ASYNC_VALID,
+  ...DOM_VALID,
+  ...MASTERY_VALID,
   'first-variable': ['let name = "Parviz";\nconsole.log(name);'],
   'star-triangle': ['for (let i = 1; i <= n; i++) {\n  let line = "";\n  for (let j = 0; j < i; j++) {\n    line += "*";\n  }\n  console.log(line);\n}'],
   fizzbuzz: ['for (let i = 1; i <= n; i++) {\n  let text = "";\n  if (i % 3 === 0) text += "Fizz";\n  if (i % 5 === 0) text += "Buzz";\n  console.log(text || i);\n}'],
@@ -151,8 +157,8 @@ async function submit(page: Page, code: string): Promise<'passed' | 'failed'> {
   return (await passed.isVisible()) ? 'passed' : 'failed';
 }
 
-test('заданий 86, идентификаторы уникальны, данные заполнены', () => {
-  expect(TASKS).toHaveLength(86);
+test('заданий 135, идентификаторы уникальны, данные заполнены', () => {
+  expect(TASKS).toHaveLength(135);
   expect(new Set(TASKS.map((task) => task.id)).size).toBe(TASKS.length);
   for (const task of TASKS) {
     expect(task.hints.length, task.id).toBeGreaterThan(0);

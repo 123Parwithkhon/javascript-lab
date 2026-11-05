@@ -1,3 +1,5 @@
+import { FORMAT_SOURCE } from './formatSource';
+
 /**
  * Страница, которая выполняет код ученика. Защита состоит из трёх уровней:
  *
@@ -16,31 +18,7 @@ const WORKER_BOOTSTRAP = String.raw`
 (() => {
   const post = self.postMessage.bind(self);
 
-  const format = (value, depth, seen) => {
-    if (typeof value === 'string') return depth === 0 ? value : JSON.stringify(value);
-    if (typeof value === 'function') return '[Function: ' + (value.name || 'anonymous') + ']';
-    if (typeof value === 'bigint') return value + 'n';
-    if (value === null || typeof value !== 'object') return String(value);
-    if (value instanceof Error) return value.name + ': ' + value.message;
-    if (seen.includes(value)) return '[Circular]';
-    if (depth > 4) return Array.isArray(value) ? '[Array]' : '[Object]';
-    const next = seen.concat([value]);
-    if (Array.isArray(value)) {
-      return '[' + value.map((item) => format(item, depth + 1, next)).join(', ') + ']';
-    }
-    const body = Object.keys(value)
-      .map((key) => key + ': ' + format(value[key], depth + 1, next))
-      .join(', ');
-    return body ? '{ ' + body + ' }' : '{}';
-  };
-
-  const safeFormat = (value) => {
-    try {
-      return format(value, 0, []);
-    } catch {
-      return '[значение нельзя показать]';
-    }
-  };
+  ${FORMAT_SOURCE}
 
   const logger = (level) => (...args) => {
     post({ type: 'log', level, text: args.map(safeFormat).join(' ') });
@@ -100,26 +78,6 @@ const WORKER_BOOTSTRAP = String.raw`
     if (index === -1) return null;
     const match = /^:(\d+)/.exec(stack.slice(index + url.length));
     return match ? Number(match[1]) : null;
-  };
-
-  // Порядок ключей не важен: { a, b } и { b, a } считаются одним значением.
-  const canonical = (value) => {
-    if (Array.isArray(value)) return value.map(canonical);
-    if (value === null || typeof value !== 'object') return value;
-    const sorted = {};
-    for (const key of Object.keys(value).sort()) sorted[key] = canonical(value[key]);
-    return sorted;
-  };
-
-  const serialize = (value) => {
-    if (value === undefined) return 'undefined';
-    if (typeof value === 'number' && !Number.isFinite(value)) return String(value);
-    if (typeof value === 'function') return '[Function]';
-    try {
-      return JSON.stringify(canonical(value));
-    } catch {
-      return '[значение нельзя показать]';
-    }
   };
 
   // const и let из кода ученика не попадают в свойства self, но видны следующему
